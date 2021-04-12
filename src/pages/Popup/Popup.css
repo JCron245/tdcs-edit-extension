@@ -1,0 +1,80 @@
+.App {
+	height: 100%;
+	margin: 0;
+	max-width: 100%;
+	padding: 0;
+	text-align: center;
+}
+
+.header {
+	align-items: center;
+	display: flex;
+	font-size: 1.5rem;
+	justify-content: center;
+	padding: 0.5rem;
+}
+
+.config-info {
+	display: flex;
+	flex-direction: column;
+	justify-content: space-around;
+	padding: 1rem;
+}
+
+.toggle-box {
+	display: flex;
+	flex-direction: column;
+	font-size: 1.1rem;
+}
+
+.toggle-wrap {
+	display: flex;
+	justify-content: space-between;
+	padding: 0.25rem 0.5rem 0.25rem 1rem;
+}
+
+.toggle-wrap-label {
+	text-align: left;
+}
+
+*::-webkit-scrollbar-track {
+	background-color: #e1ddd7;
+}
+
+*::-webkit-scrollbar {
+	background-color: #555;
+	width: 12px;
+}
+
+*::-webkit-scrollbar-thumb {
+	background-color: #454545;
+}
+
+.btn-wrap {
+	display: flex;
+	justify-content: space-around;
+	padding: 1rem;
+}
+
+.num-string-input {
+	width: 50%;
+}
+
+.react-toggle {
+	height: fit-content;
+}
+
+.react-toggle-track {
+	background-color: #8d1512 !important;
+}
+
+.react-toggle--checked .react-toggle-track {
+	background-color: #128d15 !important;
+}
+
+.react-toggle:hover:not(.react-toggle--disabled) .react-toggle-track {
+}
+
+.info-box {
+	margin-bottom: 0.25rem;
+}
