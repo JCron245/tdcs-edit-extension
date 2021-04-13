@@ -1,0 +1,23 @@
+.header {
+	align-items: center;
+	display: flex;
+	font-size: 1.5rem;
+	justify-content: center;
+	padding: 0.5rem 0.25rem;
+	flex-grow: 0.5;
+}
+
+.config-info {
+	align-items: flex-start;
+	display: flex;
+	flex-direction: column;
+	padding: 0.5rem 0.25rem;
+	flex-grow: 1;
+}
+
+.config-item {
+	align-items: center;
+	display: flex;
+	justify-content: space-between;
+	width: 100%;
+}

@@ -1,25 +1,13 @@
 import React, { useMemo } from 'react';
 import { render } from 'react-dom';
-
-import { Popup } from './Popup';
-import './index.css';
 import { createMuiTheme, CssBaseline, ThemeProvider, useMediaQuery } from '@material-ui/core';
-
-// const theme = createMuiTheme({
-// 	palette: {
-// 		type: 'dark',
-// 	},
-// });
-
-// render(
-// 	<ThemeProvider theme={theme}>
-// 		<CssBaseline />
-// 		<Popup />
-// 	</ThemeProvider>,
-// 	window.document.querySelector('#app-container')
-// );
+import { Popup } from './Popup';
+import './index.scss';
 
 const App = () => {
+	/**
+	 * Give the people the theme they desire!
+	 */
 	const prefersLightMode = useMediaQuery('(prefers-color-scheme: light)');
 	const theme = useMemo(
 		() =>

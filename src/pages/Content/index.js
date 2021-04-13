@@ -1,30 +1,56 @@
-let tdcsObject = JSON.parse(window.localStorage.getItem('tdcs.data'))?.config?.featureFlag;
-delete tdcsObject.changeService;
+const TDCS_KEY = 'tdcs.data';
+const TDCS_CONFIG_KEY = 'tdcs.config';
 
-let tdcsConfig = JSON.parse(window.localStorage.getItem('tdcs.config'));
+const init = () => {
+	/**
+	 * Save feature flags to chrome.storage.local
+	 */
+	const tdcs = JSON.parse(window.localStorage.getItem(TDCS_KEY))?.config?.featureFlag;
+	chrome.storage.local.set({ tdcs });
 
-chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
-	console.log('msg');
-	if (request.message === 'update') {
-		let tdcs = JSON.parse(window.localStorage.getItem('tdcs.data'));
-		chrome.storage.local.get('tdcs', function (data) {
-			tdcs.config.featureFlag = { ...data.tdcs };
-			console.log('the data: ', tdcs);
-			window.localStorage.setItem('tdcs.data', JSON.stringify(tdcs));
-		});
-	}
-	if (request.message === 'request') {
-		console.log('SENDING REQUEST');
-		chrome.runtime.sendMessage(
-			{
-				data: 'test',
-			},
-			function (response) {
-				console.dir(response);
-			}
-		);
-	}
-});
+	/**
+	 * Save tdcs config data to chrome.storage.local
+	 */
+	const tdcsConfig = JSON.parse(window.localStorage.getItem(TDCS_CONFIG_KEY));
+	chrome.storage.local.set({ tdcsConfig });
 
-chrome.storage.local.set({ tdcs: tdcsObject });
-chrome.storage.local.set({ tdcsConfig });
+	chrome.runtime.onMessage.addListener((request) => {
+		switch (request.message) {
+			case 'update':
+				updateTDCS();
+				break;
+			case 'refresh':
+				refreshPage();
+				break;
+			case 'reset':
+				resetTdcs();
+				break;
+			default:
+			// nothing yet
+		}
+	});
+};
+
+const updateTDCS = () => {
+	let tdcs = JSON.parse(window.localStorage.getItem(TDCS_KEY));
+	chrome.storage.local.get('tdcs', (data) => {
+		tdcs.config.featureFlag = { ...data.tdcs };
+		window.localStorage.setItem(TDCS_KEY, JSON.stringify(tdcs));
+	});
+};
+
+const refreshPage = () => {
+	window.location.reload();
+};
+
+/**
+ * Set the TDCS object to null and refresh the browser,
+ * should trigger a new call to tdcs/inform for a new copy
+ * of the data
+ */
+const resetTdcs = () => {
+	window.localStorage.setItem(TDCS_KEY, null);
+	window.location.reload();
+};
+
+init();
