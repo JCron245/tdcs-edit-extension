@@ -1,6 +1,7 @@
 import React from 'react';
-import { AppBar, Toolbar } from '@material-ui/core';
+import { AppBar, Toolbar, Typography } from '@material-ui/core';
 import { TDCSconfig } from '../interfaces/tdcsConfig.model';
+import packageJson from '../../../../package.json';
 import './header.scss';
 
 interface HeaderProps {
@@ -13,19 +14,26 @@ export const Header = (props: HeaderProps) => {
 	return (
 		<AppBar position="static">
 			<Toolbar>
-				<div className="header">Rock-Enroll TDCS Toggle Machine</div>
+				<div className="header">
+					<Typography component="h1" variant="h5">
+						Rock-Enroll TDCS Toggle Machine
+					</Typography>
+					<Typography variant="caption" display="block" gutterBottom>
+						{packageJson.version}
+					</Typography>
+				</div>
 				<div className="config-info">
 					<div className="config-item">
-						<span>Client:</span>
-						<span>{tdcsConfig?.clientType}</span>
+						<Typography variant="caption">Client:</Typography>
+						<Typography variant="caption">{tdcsConfig?.clientType}</Typography>
 					</div>
 					<div className="config-item">
-						<span>App Version:</span>
-						<span>{tdcsConfig?.appVersion}</span>
+						<Typography variant="caption">App Version:</Typography>
+						<Typography variant="caption">{tdcsConfig?.appVersion}</Typography>
 					</div>
 					<div className="config-item">
-						<span>Device ID:</span>
-						<span>{tdcsConfig?.deviceId}</span>
+						<Typography variant="caption">Device ID:</Typography>
+						<Typography variant="caption">{tdcsConfig?.deviceId}</Typography>
 					</div>
 				</div>
 			</Toolbar>

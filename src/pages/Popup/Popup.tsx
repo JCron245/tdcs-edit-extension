@@ -12,18 +12,31 @@ import './popup.scss';
 import 'react-toggle/style.css';
 
 export const Popup = () => {
+	const [isSpectrumWebsite, setIsSpectrumWebsite] = useState<boolean>(false);
 	const [tdcs, setTdcs] = useState<TDCS>();
 	const [tdcsConfig, setTdcsConfig] = useState<TDCSconfig>();
 	const [tdcsFormElements, setTdcsFormElements] = useState<ReactElement>();
 
 	useEffect(() => {
-		chrome.storage.local.get('tdcs', function (data) {
-			setTdcs(data.tdcs);
-		});
-		chrome.storage.local.get('tdcsConfig', function (data) {
-			setTdcsConfig(data.tdcsConfig);
+		chrome.tabs.query({ currentWindow: true, active: true }, (tabs) => {
+			var activeTab = tabs[0];
+			if (activeTab.id) {
+				chrome.tabs.sendMessage(activeTab.id, { message: 'opened' }, (response: any) => {
+					setIsSpectrumWebsite(!!response);
+					if (!tdcs || !tdcsConfig || tdcsConfig.clientType !== response.tdcsConfig.clientType) {
+						setTdcs(response.tdcs);
+						setTdcsConfig(response.tdcsConfig);
+					}
+				});
+			}
 		});
 	}, []);
+
+	useEffect(() => {
+		if (tdcs) {
+			setTdcsFormElements(buildTdcsObject(tdcs, 'tdcs', 0));
+		}
+	}, [tdcs]);
 
 	const toggleUpdate = (event: React.ChangeEvent<HTMLInputElement>, toggleName: string, toggleParentName: string) => {
 		const tdcsCopy = tdcs;
@@ -41,7 +54,6 @@ export const Popup = () => {
 		}
 		findAndUpdateKey(tdcsCopy, toggleParentName, toggleName, newToggleValue);
 		setTdcs(JSON.parse(JSON.stringify(tdcsCopy)));
-		setTdcsFormElements(buildTdcsObject(tdcsCopy, 'tdcs', 0));
 	};
 
 	const parseType = (item: any, name: string, parentName: string, depth: number): ReactElement => {
@@ -60,13 +72,21 @@ export const Popup = () => {
 					<label className="toggle-wrap-label" htmlFor={`${parentName}-${name}-${depth}`}>
 						{name}
 						<FileCopyIcon
-							titleAccess={`Click me to copy '${name}' to your clipboard!`}
-							style={{ cursor: 'pointer', fontSize: '1rem', margin: '0 1rem' }}
+							titleAccess={`Click to copy '${name}'`}
+							style={{ cursor: 'pointer', fontSize: '.95rem', margin: '0 1rem' }}
 							onClick={(event) => copyValue(event, name)}
 						/>
+						<span className="type-hint">{itemType}</span>
 					</label>
 					{itemType !== 'boolean' && (
-						<input type={type} className="num-string-input" value={item} onChange={(event) => toggleUpdate(event, name, parentName)} />
+						<>
+							<input type={type} className="num-string-input" value={item} onChange={(event) => toggleUpdate(event, name, parentName)} />
+							<FileCopyIcon
+								titleAccess={`Click to copy '${item}'`}
+								style={{ cursor: 'pointer', fontSize: '.95rem', margin: '0 1rem' }}
+								onClick={(event) => copyValue(event, name)}
+							/>
+						</>
 					)}
 					{itemType === 'boolean' && (
 						<Toggle
@@ -92,9 +112,14 @@ export const Popup = () => {
 			return <>{toggles}</>;
 		} else {
 			return (
-				<Accordion elevation={6}>
+				<Accordion elevation={7} style={{ marginTop: '.25rem', marginBottom: '.25rem' }}>
 					<AccordionSummary expandIcon={<ExpandMoreIcon />} aria-controls={`panel-content-${name}`} id={`panel-header-${name}`}>
-						<Typography>{name}</Typography>
+						<Typography>
+							{name}
+							<span className="type-hint" style={{ marginLeft: '1rem' }}>
+								{Array.isArray(obj) ? 'array' : 'object'}
+							</span>
+						</Typography>
 					</AccordionSummary>
 					<AccordionDetails style={{ display: 'flex', flexDirection: 'column' }}>{toggles}</AccordionDetails>
 				</Accordion>
@@ -102,21 +127,20 @@ export const Popup = () => {
 		}
 	};
 
-	/**
-	 * For whatever reason hooks don't seem to be working as reliably in the extension space,
-	 * this fires - sometimes - but not always unfortunately.
-	 */
-	useEffect(() => {
-		if (tdcs) {
-			setTdcsFormElements(buildTdcsObject(tdcs, 'tdcs', 0));
-		}
-	}, [tdcs]);
-
 	return (
 		<div className="app">
-			<Header tdcsConfig={tdcsConfig} />
-			<ExtensionToolbar tdcs={tdcs} />
-			<div className="toggle-box">{tdcsFormElements}</div>
+			{isSpectrumWebsite && (
+				<>
+					<Header tdcsConfig={tdcsConfig} />
+					<ExtensionToolbar tdcs={tdcs} />
+					<div className="toggle-box">{tdcsFormElements}</div>
+				</>
+			)}
+			{!isSpectrumWebsite && (
+				<div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+					<Typography>It doesn't appear this is a spectrum website!</Typography>
+				</div>
+			)}
 		</div>
 	);
 };

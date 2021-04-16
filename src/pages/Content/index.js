@@ -2,20 +2,27 @@ const TDCS_KEY = 'tdcs.data';
 const TDCS_CONFIG_KEY = 'tdcs.config';
 
 const init = () => {
-	/**
-	 * Save feature flags to chrome.storage.local
-	 */
-	const tdcs = JSON.parse(window.localStorage.getItem(TDCS_KEY))?.config?.featureFlag;
-	chrome.storage.local.set({ tdcs });
+	console.info('[INFO] TDCS Toggle Machine Content Script Injected');
+	readAndStoreTDCS();
 
-	/**
-	 * Save tdcs config data to chrome.storage.local
-	 */
-	const tdcsConfig = JSON.parse(window.localStorage.getItem(TDCS_CONFIG_KEY));
-	chrome.storage.local.set({ tdcsConfig });
-
-	chrome.runtime.onMessage.addListener((request) => {
+	chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
 		switch (request.message) {
+			case 'opened':
+				/**
+				 * Save feature flags to chrome.storage.local
+				 */
+				const tdcs = JSON.parse(window.localStorage.getItem(TDCS_KEY))?.config?.featureFlag;
+				chrome.storage.local.set({ tdcs });
+
+				/**
+				 * Save tdcs config data to chrome.storage.local
+				 */
+				const tdcsConfig = JSON.parse(window.localStorage.getItem(TDCS_CONFIG_KEY));
+				chrome.storage.local.set({ tdcsConfig });
+				if (window.location.href.includes('spectrum')) {
+					sendResponse({ tdcsConfig, tdcs });
+				}
+				break;
 			case 'update':
 				updateTDCS();
 				break;
@@ -29,6 +36,20 @@ const init = () => {
 			// nothing yet
 		}
 	});
+};
+
+const readAndStoreTDCS = () => {
+	/**
+	 * Save feature flags to chrome.storage.local
+	 */
+	const tdcs = JSON.parse(window.localStorage.getItem(TDCS_KEY))?.config?.featureFlag;
+	chrome.storage.local.set({ tdcs });
+
+	/**
+	 * Save tdcs config data to chrome.storage.local
+	 */
+	const tdcsConfig = JSON.parse(window.localStorage.getItem(TDCS_CONFIG_KEY));
+	chrome.storage.local.set({ tdcsConfig });
 };
 
 const updateTDCS = () => {

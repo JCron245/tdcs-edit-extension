@@ -21,5 +21,5 @@
 			"matches": []
 		}
 	],
-	"permissions": ["storage", "unlimitedStorage"]
+	"permissions": ["activeTab", "declarativeContent", "storage", "unlimitedStorage"]
 }
