@@ -12,7 +12,7 @@ const sendMsg = (message: string) => {
 	chrome.tabs.query({ currentWindow: true, active: true }, (tabs) => {
 		const activeTab = tabs[0];
 		if (activeTab?.id) {
-			chrome.tabs.sendMessage(activeTab.id, { message });
+			chrome.tabs.sendMessage(activeTab.id, message);
 		}
 	});
 };
@@ -32,7 +32,11 @@ export const ExtensionToolbar = (props: ExtensionToolbarProps) => {
 			<Button variant="contained" color="primary" onClick={() => sendMsg('refresh')}>
 				Refresh Page
 			</Button>
-			<Button variant="contained" color="primary" onClick={() => sendMsg('reset')}>
+			<Button
+				variant="contained"
+				color="primary"
+				onClick={() => sendMsg('reset')}
+				title="Deletes TDCS in LocalStorage and refreshes the page to trigger a new inform call being made.">
 				Reset TDCS
 			</Button>
 		</Paper>

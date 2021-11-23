@@ -1,15 +1,18 @@
 import React from 'react';
 import { AppBar, Toolbar, Typography } from '@material-ui/core';
+import HelpOutline from '@material-ui/icons/HelpOutline';
 import { TDCSconfig } from '../interfaces/tdcsConfig.model';
 import packageJson from '../../../../package.json';
 import './header.scss';
 
 interface HeaderProps {
 	tdcsConfig?: TDCSconfig;
+	localStorageTS?: string;
+	configTS?: number;
 }
 
 export const Header = (props: HeaderProps) => {
-	const { tdcsConfig } = props;
+	const { tdcsConfig, localStorageTS, configTS } = props;
 
 	return (
 		<AppBar position="static">
@@ -19,7 +22,21 @@ export const Header = (props: HeaderProps) => {
 						Rock-Enroll TDCS Toggle Machine
 					</Typography>
 					<Typography variant="caption" display="block" gutterBottom>
-						{packageJson.version}
+						Version: {packageJson.version}
+					</Typography>
+					<Typography variant="caption" style={{ display: 'flex', alignItems: 'center' }} gutterBottom>
+						<span>{localStorageTS && new Date(localStorageTS).toLocaleString()}</span>
+						<HelpOutline
+							titleAccess="Timestamp from when this extension last received TDCS data from local storage."
+							style={{ marginLeft: '.25rem', marginBottom: '.15rem', fontSize: '1rem' }}
+						/>
+					</Typography>
+					<Typography variant="caption" style={{ display: 'flex', alignItems: 'center' }} gutterBottom>
+						<span>{configTS && new Date(configTS).toLocaleString()}</span>
+						<HelpOutline
+							titleAccess="Timestamp from TDCS Config Object"
+							style={{ marginLeft: '.25rem', marginBottom: '.15rem', fontSize: '1rem' }}
+						/>
 					</Typography>
 				</div>
 				<div className="config-info">

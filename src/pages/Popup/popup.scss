@@ -6,7 +6,7 @@
 	display: flex;
 	flex-direction: column;
 	font-size: 1.1rem;
-	height: 456px;
+	height: 435px;
 	overflow-y: scroll;
 }
 
@@ -52,12 +52,4 @@
 
 .info-box {
 	margin-bottom: 0.25rem;
-}
-
-.type-hint {
-	font-family: 'Roboto Mono', monospace;
-	font-size: 0.68rem;
-	font-style: italic;
-	opacity: 0.7;
-	user-select: none;
 }

@@ -1,28 +1,74 @@
-import React, { useMemo } from 'react';
+import React, { useEffect, useState } from 'react';
 import { render } from 'react-dom';
-import { createMuiTheme, CssBaseline, ThemeProvider, useMediaQuery } from '@material-ui/core';
+import { Button, createTheme, CssBaseline, ThemeProvider, Typography } from '@material-ui/core';
 import { Popup } from './Popup';
 import './index.scss';
 
 const App = () => {
-	/**
-	 * Give the people the theme they desire!
-	 */
-	const prefersLightMode = useMediaQuery('(prefers-color-scheme: light)');
-	const theme = useMemo(
-		() =>
-			createMuiTheme({
+	const [resetFlag, setResetFlag] = useState(false);
+	const [injectedFlag, setInjectedFlag] = useState(false);
+	const [isSpectrumWebsite, setIsSpectrumWebsite] = useState(false);
+	const [theme, setTheme] = useState<any>();
+
+	useEffect(() => {
+		setTheme(() =>
+			createTheme({
 				palette: {
-					type: prefersLightMode ? 'light' : 'dark',
+					type: 'dark',
 				},
-			}),
-		[prefersLightMode]
-	);
+			})
+		);
+
+		chrome.runtime.onMessage.addListener((message) => {
+			if (message === 'reset') {
+				setResetFlag(true);
+			}
+			if (message === 'injected') {
+				setInjectedFlag(true);
+			}
+		});
+		chrome.tabs.query({ currentWindow: true, active: true }, (tabs) => {
+			const activeTab = tabs[0];
+			if (activeTab.id) {
+				chrome.tabs.sendMessage(activeTab.id, 'isSpectrum', (response: any) => {
+					setIsSpectrumWebsite(response.isSpectrum);
+				});
+			}
+		});
+	}, []);
+
+	useEffect(() => {
+		if (resetFlag && injectedFlag) {
+			setTimeout(() => {
+				window.location.reload();
+			});
+		}
+	}, [resetFlag, injectedFlag]);
 
 	return (
 		<ThemeProvider theme={theme}>
 			<CssBaseline />
-			<Popup />
+			{!isSpectrumWebsite && (
+				<div
+					style={{
+						width: '100%',
+						height: '100%',
+						display: 'flex',
+						alignItems: 'center',
+						justifyContent: 'center',
+						flexDirection: 'column',
+					}}>
+					<Typography>It doesn't appear this is a spectrum website!</Typography>
+					<Typography className="sub-text">
+						If your sure it is, try
+						<Button variant="text" onClick={() => window.location.reload()} style={{ textDecoration: 'underline' }}>
+							reloading
+						</Button>
+					</Typography>
+				</div>
+			)}
+
+			{isSpectrumWebsite && <Popup />}
 		</ThemeProvider>
 	);
 };

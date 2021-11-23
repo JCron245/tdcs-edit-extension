@@ -1,0 +1,27 @@
+.type-hint {
+	font-family: 'Roboto Mono', monospace;
+	font-size: 0.7rem;
+	font-style: italic;
+	user-select: none;
+	margin: 0;
+
+	.boolean {
+		color: #0faded;
+	}
+
+	.array {
+		color: #80cbc4;
+	}
+
+	.object {
+		color: #ff9800;
+	}
+
+	.string {
+		color: #00c853;
+	}
+
+	.number {
+		color: #e53935;
+	}
+}
