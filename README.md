@@ -16,9 +16,17 @@
 - Save your changes to local storage with the button at the top of the popup
 - Refresh the page for the app to see the new values
 
-## Installing and Running
+## Installing
+1. Go to the [Releases](https://github.com/JCron245/tdcs-edit-extension/releases) for this repo.
+2. Grab the latest version (or whichever version you prefer)
+3. Download and unzip the attached build zip
+4. Install the extension in Chrome by following:
+   1. Access `chrome://extensions/`
+   2. Check `Developer mode`
+   3. Click on `Load unpacked extension`
+   4. Select the unzipped `build` folder.
 
-### Procedures:
+## Running Locally
 
 1. Check if your [Node.js](https://nodejs.org/) version is >= **14**.
 2. Clone this repository.
