@@ -1,6 +1,6 @@
 {
 	"name": "tdcs-config-tool",
-	"version": "0.0.4",
+	"version": "0.0.5",
 	"description": "A tool to easily configure TDCS toggles",
 	"license": "MIT",
 	"scripts": {
@@ -14,6 +14,7 @@
 		"@material-ui/icons": "^4.11.2",
 		"clipboard-copy": "^4.0.1",
 		"react": "^17.0.2",
+		"react-countdown": "^2.3.2",
 		"react-dom": "^17.0.2",
 		"react-hot-loader": "^4.13.0",
 		"react-toggle": "^4.1.2"
@@ -24,7 +25,7 @@
 		"@babel/preset-env": "^7.16.4",
 		"@babel/preset-react": "^7.16.0",
 		"@hot-loader/react-dom": "^17.0.1",
-		"@types/chrome": "0.0.164",
+		"@types/chrome": "0.0.179",
 		"@types/react": "^17.0.36",
 		"@types/react-dom": "^17.0.11",
 		"@types/react-toggle": "^4.0.3",
@@ -50,8 +51,8 @@
 		"html-webpack-plugin": "^5.5.0",
 		"husky": "^6.0.0",
 		"lint-staged": "^12.1.1",
-		"node-sass": "^6.0.1",
-		"prettier": "^2.4.1",
+		"node-sass": "^7.0.1",
+		"prettier": "^2.5.1",
 		"sass-loader": "^12.3.0",
 		"source-map-loader": "^3.0.0",
 		"style-loader": "^3.3.1",

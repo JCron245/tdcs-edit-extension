@@ -1,19 +1,66 @@
 const TDCS_KEY = 'tdcs.data';
 const TDCS_CONFIG_KEY = 'tdcs.config';
 
+let _mockuser = '';
+let _portal = '';
+
+const spectrumDomains = [
+	'spectrum.com',
+	'spectrum.net',
+	'spectrumbusiness.net',
+	'spectrumcommunitysolutions.com',
+	'spectrumcommunitysolutions.net',
+	'spectrumflow.net'
+];
+
+const checkIfSpectrumDomain = () => {
+	let hostName = window.location.hostname;
+	for (let i = 0; i < spectrumDomains.length; i++) {
+		if (hostName.endsWith(spectrumDomains[i])) return true;
+		continue;
+	}
+	return false;
+}
+
+const watchForCookieChange = () => {
+	(window as any)['cookieStore'].addEventListener('change', (event: any) => {
+		let changed = false;
+		event.changed.forEach((cookie: any) => {
+			if (cookie.name === '_mockuser' && cookie.value !== _mockuser) {
+				_mockuser = cookie.value;
+				changed = true;
+			}
+			if (cookie.name === '_portal' && cookie.value !== _portal) {
+				_portal = cookie.value;
+				changed = true;
+			}
+			if (changed) {
+				chrome.runtime.sendMessage('cookie update');
+			}
+		})
+	})
+}
+
+const getCookie = (name: string) => {
+	return document.cookie?.split('; ')?.find(row => row.startsWith(`${name}=`))?.split('=')[1] || ''
+}
+
 const init = () => {
-	const isSpectrum = window.location.href.includes('spectrum.net');
-	console.info('[INFO] TDCS Toggle Machine Content Script Injected');
+	const isSpectrum = checkIfSpectrumDomain();
+	_mockuser = getCookie('_mockuser');
+	_portal = getCookie('_portal');
 	chrome.runtime.sendMessage('injected');
+	console.info('[INFO] TDCS Toggle Machine Content Script Injected');
 	readAndStoreTDCS();
+	watchForCookieChange();
 
 	chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
 		switch (message) {
 			case 'ready':
-				if (window.location.href.includes('spectrum')) {
+				if (isSpectrum) {
 					chrome.storage.local.get(['tdcsConfig', 'tdcs', 'timestamp'], (data) => {
-						const { tdcs, tdcsConfig, timestamp } = data;
-						sendResponse({ tdcsConfig, tdcs, timestamp });
+						const { tdcs, tdcsConfig, timestamp, } = data;
+						sendResponse({ tdcsConfig, tdcs, timestamp, _mockuser, _portal });
 					});
 				}
 				return true;
@@ -29,6 +76,9 @@ const init = () => {
 			case 'reset':
 				resetTdcs();
 				chrome.runtime.sendMessage('reset');
+				return true;
+			case 'cookies':
+				sendResponse({ _mockuser, _portal });
 				return true;
 			default:
 				return true;

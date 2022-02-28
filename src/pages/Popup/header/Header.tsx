@@ -6,13 +6,13 @@ import packageJson from '../../../../package.json';
 import './header.scss';
 
 interface HeaderProps {
-	tdcsConfig?: TDCSconfig;
+	tdcsConfig: TDCSconfig;
 	localStorageTS?: string;
-	configTS?: number;
+	cookies?: { _mockuser: string; _portal: string };
 }
 
 export const Header = (props: HeaderProps) => {
-	const { tdcsConfig, localStorageTS, configTS } = props;
+	const { tdcsConfig, localStorageTS, cookies } = props;
 
 	return (
 		<AppBar position="static">
@@ -32,7 +32,7 @@ export const Header = (props: HeaderProps) => {
 						/>
 					</Typography>
 					<Typography variant="caption" style={{ display: 'flex', alignItems: 'center' }} gutterBottom>
-						<span>{configTS && new Date(configTS).toLocaleString()}</span>
+						<span>{new Date(tdcsConfig.timestamp).toLocaleString()}</span>
 						<HelpOutline
 							titleAccess="Timestamp from TDCS Config Object"
 							style={{ marginLeft: '.25rem', marginBottom: '.15rem', fontSize: '1rem' }}
@@ -52,6 +52,18 @@ export const Header = (props: HeaderProps) => {
 						<Typography variant="caption">Device ID:</Typography>
 						<Typography variant="caption">{tdcsConfig?.deviceId}</Typography>
 					</div>
+					{cookies?._portal && (
+						<div className="config-item">
+							<Typography variant="caption">_portal:</Typography>
+							<Typography variant="caption">{cookies?._portal}</Typography>
+						</div>
+					)}
+					{cookies?._mockuser && (
+						<div className="config-item">
+							<Typography variant="caption">_mockuser:</Typography>
+							<Typography variant="caption">{cookies?._mockuser}</Typography>
+						</div>
+					)}
 				</div>
 			</Toolbar>
 		</AppBar>

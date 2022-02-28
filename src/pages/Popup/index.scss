@@ -10,6 +10,10 @@ html {
 	width: 800px;
 }
 
+html::-webkit-scrollbar {
+	display: none;
+}
+
 body {
 	-moz-osx-font-smoothing: grayscale;
 	-webkit-font-smoothing: antialiased;
@@ -17,6 +21,11 @@ body {
 	overflow: hidden;
 }
 
+body::-webkit-scrollbar {
+	display: none;
+}
+
 #app-container {
 	height: 600px;
+	overflow: hidden;
 }

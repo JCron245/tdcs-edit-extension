@@ -14,6 +14,7 @@ export const Popup = () => {
 	const [tdcs, setTdcs] = useState<TDCS>();
 	const [tdcsConfig, setTdcsConfig] = useState<TDCSconfig>();
 	const [timestamp, setTimestamp] = useState<string>();
+	const [cookies, setCookies] = useState<any>();
 
 	useEffect(() => {
 		chrome.tabs.query({ currentWindow: true, active: true }, (tabs) => {
@@ -23,6 +24,20 @@ export const Popup = () => {
 					setTdcs(response.tdcs);
 					setTdcsConfig(response.tdcsConfig);
 					setTimestamp(response.timestamp);
+					setCookies({ _portal: response._portal, _mockuser: response._mockuser });
+				});
+			}
+		});
+
+		chrome.runtime.onMessage.addListener((message) => {
+			if (message === 'cookie update') {
+				chrome.tabs.query({ currentWindow: true, active: true }, (tabs) => {
+					const activeTab = tabs[0];
+					if (activeTab.id) {
+						chrome.tabs.sendMessage(activeTab.id, 'cookies', (response: any) => {
+							setCookies(response);
+						});
+					}
 				});
 			}
 		});
@@ -52,9 +67,11 @@ export const Popup = () => {
 		setTdcs(tdcsCopy);
 	};
 
+	if (!tdcs || !tdcsConfig) return null;
+
 	return (
 		<div className="app">
-			<Header tdcsConfig={tdcsConfig} localStorageTS={timestamp} configTS={tdcsConfig?.timestamp} />
+			<Header tdcsConfig={tdcsConfig} localStorageTS={timestamp} cookies={cookies} />
 			<ExtensionToolbar tdcs={tdcs} />
 			<div className="toggle-box">{tdcsFormElements}</div>
 		</div>

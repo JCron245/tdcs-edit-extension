@@ -27,6 +27,7 @@ const App = () => {
 				setInjectedFlag(true);
 			}
 		});
+
 		chrome.tabs.query({ currentWindow: true, active: true }, (tabs) => {
 			const activeTab = tabs[0];
 			if (activeTab.id) {
@@ -44,6 +45,8 @@ const App = () => {
 			});
 		}
 	}, [resetFlag, injectedFlag]);
+
+	if (!theme) return null;
 
 	return (
 		<ThemeProvider theme={theme}>

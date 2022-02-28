@@ -37,7 +37,7 @@ export const buildTdcsObject = (obj: any, name: string, depth: number, toggleFn:
 	if (depth === 0) {
 		return <>{toggles}</>;
 	} else {
-		return <ObjectAccordion name={name} type={type} toggles={toggles} />;
+		return <ObjectAccordion name={name} type={type} toggles={toggles} key={`${name}-${type}-${depth}`} />;
 	}
 };
 
